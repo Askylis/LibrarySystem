@@ -19,6 +19,7 @@ namespace LibraryManager.DataAccess
         public DbSet<User> Users { get; set; }
         public DbSet<Author> Authors { get; set; }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connectionString);
