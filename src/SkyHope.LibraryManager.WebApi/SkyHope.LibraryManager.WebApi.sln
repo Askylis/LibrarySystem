@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkyHope.LibraryManager.WebApi", "SkyHope.LibraryManager.WebApi.csproj", "{0B6CE95A-196F-46F0-A8E2-8B3A4E7A2641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryManager.DataAccess", "..\LibraryManager.DataAccess\LibraryManager.DataAccess.csproj", "{B3DE1BDF-DC16-4043-BA51-6C072ADF7145}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryManager.DataAccess", "..\LibraryManager.DataAccess\LibraryManager.DataAccess.csproj", "{B3DE1BDF-DC16-4043-BA51-6C072ADF7145}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryManager.Ui", "..\LibraryManager.Ui\LibraryManager.Ui.csproj", "{9C440A2C-C784-4D29-8DE4-EC76F0971AA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B3DE1BDF-DC16-4043-BA51-6C072ADF7145}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3DE1BDF-DC16-4043-BA51-6C072ADF7145}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3DE1BDF-DC16-4043-BA51-6C072ADF7145}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C440A2C-C784-4D29-8DE4-EC76F0971AA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C440A2C-C784-4D29-8DE4-EC76F0971AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C440A2C-C784-4D29-8DE4-EC76F0971AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C440A2C-C784-4D29-8DE4-EC76F0971AA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

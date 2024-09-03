@@ -8,5 +8,6 @@ namespace LibraryManager.DataAccess
 {
     internal interface ILibraryManagerRepository
     {
+
     }
 }

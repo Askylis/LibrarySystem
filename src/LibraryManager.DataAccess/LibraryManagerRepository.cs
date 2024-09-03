@@ -1,6 +1,6 @@
 ﻿namespace LibraryManager.DataAccess
 {
-    public class Class1
+    public class LibraryManagerRepository : ILibraryManagerRepository
     {
 
     }
