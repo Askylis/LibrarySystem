@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManager.DataAccess.Models
 {
-    internal class Author
+    public class Author
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int AuthorId { get; set; }
+        public string Name { get; set; }
+        public string Biography { get; set; }
+        public string DateOfBirth { get; set; }
     }
 }

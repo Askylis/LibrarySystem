@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryManager.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManager.DataAccess
 {
-    internal class LibraryContext
+    public class LibraryContext : DbContext
     {
+        public LibraryContext(DbContextOptions options) 
+            : base(options)
+        { 
+        }
+
+        public DbSet<Book> Books { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Author> Authors { get; set; }
     }
 }
