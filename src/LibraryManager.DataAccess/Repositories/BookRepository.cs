@@ -11,35 +11,62 @@ namespace LibraryManager.DataAccess.Repositories
         {
             _databaseOptions = databaseOptions;
         }
-        public async Task Add(Book entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Book>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Book?> GetEntity(int id)
+        public async Task<bool> TryAddAsync(Book entity)
         {
             using (var context = new LibraryContext(_databaseOptions.ConnectionString))
             {
-                var book = await context.Books.FirstOrDefaultAsync(b => b.BookId == id);
-                if (book == null)
+                try
                 {
-                    return null;
+                    await context.Books.AddAsync(entity)
+                                        .ConfigureAwait(false);
+                    await context.SaveChangesAsync();
+                    return true;
                 }
-                return book;
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
         }
 
-        public async Task Update(Book dbEntity, Book entity)
+        public async Task<bool> TryDeleteAsync(int id)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                try
+                {
+                    var book = await context.Books.SingleOrDefaultAsync(b => b.BookId == id);
+                    if (book == null)
+                    {
+                        return false;
+                    }
+                    book.IsDeleted = true;
+                    await context.SaveChangesAsync()
+                        .ConfigureAwait(false);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<Book>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Book?> GetEntityAsync(int id)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Books.FirstOrDefaultAsync(b => b.BookId == id)
+                    .ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateAsync(Book dbEntity, Book entity)
         {
             throw new NotImplementedException();
         }

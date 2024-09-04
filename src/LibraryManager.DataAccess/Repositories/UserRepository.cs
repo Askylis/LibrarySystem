@@ -12,27 +12,31 @@ namespace LibraryManager.DataAccess.Repositories
             _databaseOptions = databaseOptions;
         }
 
-        public Task Add(User entity)
+        public async Task TryAddAsync(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(int id)
+        public async Task<bool> TryDeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> GetEntity(int id)
+        public async Task<User?> GetEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Users.FirstOrDefaultAsync(b => b.UserId == id)
+                    .ConfigureAwait(false);
+            }
         }
 
-        public Task Update(User dbEntity, User entity)
+        public async Task UpdateAsync(User dbEntity, User entity)
         {
             throw new NotImplementedException();
         }

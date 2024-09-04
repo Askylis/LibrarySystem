@@ -11,27 +11,27 @@ namespace LibraryManager.DataAccess.Repositories
         {
             _databaseOptions = databaseOptions;
         }
-        public Task Add(Author entity)
+        public async Task TryAddAsync(Author entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(int id)
+        public async Task<bool> TryDeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Author>> GetAll()
+        public async Task<IEnumerable<Author>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Author?> GetEntity(int id)
+        public async Task<Author?> GetEntityAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(Author dbEntity, Author entity)
+        public async Task UpdateAsync(Author dbEntity, Author entity)
         {
             throw new NotImplementedException();
         }

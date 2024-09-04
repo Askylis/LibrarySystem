@@ -17,7 +17,7 @@ namespace LibraryManager.DataAccess.Models
         public int DewyClass {  get; set; }
         public string Isbn { get; set; }
         public int Year { get; set; }
-        public DateTime? DueDate { get; set; }
+        public DateTime? DueDate { get; set; } = null;
         public bool IsAvailable { get; set; }
         public bool IsDeleted { get; set; }
 
