@@ -6,27 +6,40 @@ namespace LibraryManager.DataAccess.Repositories
 {
     public class BookRepository : ILibraryManagerRepository<Book>
     {
-        public void Add(Book entity)
+        private readonly DatabaseOptions _databaseOptions;
+        public BookRepository(DatabaseOptions databaseOptions)
+        {
+            _databaseOptions = databaseOptions;
+        }
+        public async Task Add(Book entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Book> GetAll()
+        public async Task<IEnumerable<Book>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Book GetEntity(int id)
+        public async Task<Book?> GetEntity(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                var book = await context.Books.FirstOrDefaultAsync(b => b.BookId == id);
+                if (book == null)
+                {
+                    return null;
+                }
+                return book;
+            }
         }
 
-        public void Update(Book dbEntity, Book entity)
+        public async Task Update(Book dbEntity, Book entity)
         {
             throw new NotImplementedException();
         }

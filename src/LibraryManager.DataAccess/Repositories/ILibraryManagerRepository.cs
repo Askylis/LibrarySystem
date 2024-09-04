@@ -2,10 +2,10 @@
 {
     public interface ILibraryManagerRepository<TEntity>
     {
-        IEnumerable<TEntity> GetAll();
-        TEntity GetEntity(int id);
-        void Add(TEntity entity);
-        void Update(TEntity dbEntity, TEntity entity);
-        void Delete(int id);
+        Task<IEnumerable<TEntity>> GetAll();
+        Task<TEntity?> GetEntity(int id);
+        Task Add(TEntity entity);
+        Task Update(TEntity dbEntity, TEntity entity);
+        Task Delete(int id);
     }
 }

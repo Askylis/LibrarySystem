@@ -9,14 +9,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     [Route("[controller]/[action]")]
     public class BookController : Controller
     {
-        private readonly DatabaseOptions _databaseOptions;
         private const int maxBookCount = 3;
         private const int dueInDays = 14;
         private const decimal lateFeePerDay = 0.5m;
-        public BookController(DatabaseOptions databaseOptions)
-        {
-            _databaseOptions = databaseOptions;
-        }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HttpModels.Book>>> GetAllAsync()
@@ -160,6 +155,12 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddBookAsync(HttpModels.Book book)
+        {
+
         }
     }
 }

@@ -6,27 +6,33 @@ namespace LibraryManager.DataAccess.Repositories
 {
     public class UserRepository : ILibraryManagerRepository<User>
     {
-        public void Add(User entity)
+        private readonly DatabaseOptions _databaseOptions;
+        public UserRepository(DatabaseOptions databaseOptions)
+        {
+            _databaseOptions = databaseOptions;
+        }
+
+        public Task Add(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(int id)
+        public Task Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<User> GetAll()
+        public Task<IEnumerable<User>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public User GetEntity(int id)
+        public Task<User?> GetEntity(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(User dbEntity, User entity)
+        public Task Update(User dbEntity, User entity)
         {
             throw new NotImplementedException();
         }
