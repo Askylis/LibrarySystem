@@ -11,6 +11,8 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     {
         private readonly DatabaseOptions _databaseOptions;
         private const int maxBookCount = 3;
+        private const int dueInDays = 14;
+        private const decimal lateFeePerDay = 0.5m;
         public BookController(DatabaseOptions databaseOptions)
         {
             _databaseOptions = databaseOptions;
@@ -84,8 +86,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
                 result.IsDeleted = true;
                 await context.SaveChangesAsync();
-                return Ok();
             }
+
+            return Ok();
         }
 
         [HttpPatch]
@@ -118,11 +121,40 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 bookToUpdate.IsAvailable = false;
                 bookToUpdate.UserId = userToAssign.UserId;
                 bookToUpdate.User = userToAssign;
+                bookToUpdate.DueDate = DateTime.Now.AddDays(dueInDays);
                 userToAssign.CheckedOutBooks.Add(bookToUpdate);
                 await context.SaveChangesAsync();
-
-                return Ok();
             }
+
+            return Ok();
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult> CheckInAsync(HttpModels.Book book)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                var bookToUpdate = await context.Books.FirstOrDefaultAsync(b => b.BookId == book.BookId);
+                if (bookToUpdate is null)
+                {
+                    return NotFound();
+                }
+
+                bookToUpdate.IsAvailable = true;
+                bookToUpdate.User = null;
+                bookToUpdate.UserId = null;
+
+                if (bookToUpdate.DueDate < DateTime.UtcNow)
+                {
+                    var daysLate = DateTime.UtcNow - bookToUpdate.DueDate.Value;
+                    bookToUpdate.User.LateFeeDue = daysLate.Days * lateFeePerDay;
+                }
+
+                bookToUpdate.User.CheckedOutBooks.Remove(bookToUpdate);
+                await context.SaveChangesAsync();
+            }
+
+            return Ok();
         }
     }
 }
