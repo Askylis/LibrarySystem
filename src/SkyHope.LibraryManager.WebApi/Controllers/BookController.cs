@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManager.DataAccess.Models;
 using LibraryManager.DataAccess;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -13,6 +14,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         {
             _databaseOptions = databaseOptions;
         }
+
         [HttpGet]
         public ActionResult<IEnumerable<HttpModels.Book>> GetAll()
         {
@@ -67,16 +69,41 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             }
         }
 
+        //[HttpPatch]
+        //public ActionResult<HttpModels.Book> Delete(HttpModels.Book book)
+        //{
+
+        //}
+
         [HttpPatch]
-        public ActionResult<HttpModels.Book> Delete(HttpModels.Book book)
+        public ActionResult CheckOut(HttpModels.Book book, HttpModels.User user)
         {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                var bookToUpdate = context.Books.FirstOrDefault(b => b.BookId == book.BookId);
+                if (bookToUpdate is null)
+                {
+                    return NotFound();
+                }
 
-        }
+                if (!bookToUpdate.IsAvailable)
+                {
+                    return BadRequest("This book is not available for checkout.");
+                }
 
-        [HttpPatch]
-        public ActionResult<HttpModels.Book> CheckOut(HttpModels.Book book)
-        {
+                var userToAssign = context.Users.FirstOrDefault(u => u.UserId == user.UserId);
+                if (userToAssign is null)
+                {
+                    return BadRequest("Invalid user.");
+                }
 
+                bookToUpdate.IsAvailable = false;
+                bookToUpdate.UserId = userToAssign.UserId;
+                bookToUpdate.User = userToAssign;
+                context.SaveChanges();
+
+                return Ok();
+            }
         }
     }
 }

@@ -22,7 +22,10 @@ namespace LibraryManager.DataAccess
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connectionString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(_connectionString);
+            } 
         }
     }
 }
