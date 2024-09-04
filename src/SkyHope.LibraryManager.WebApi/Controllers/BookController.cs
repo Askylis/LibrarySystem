@@ -118,6 +118,11 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                     return BadRequest($"This user has {maxBookCount} books checked out, and may not check out more.");
                 }
 
+                if (userToAssign.LateFeeDue > 0)
+                {
+                    return BadRequest($"This user has ${userToAssign.LateFeeDue} in late fees due and cannot check out another book until this is paid off.");
+                }
+
                 bookToUpdate.IsAvailable = false;
                 bookToUpdate.UserId = userToAssign.UserId;
                 bookToUpdate.User = userToAssign;

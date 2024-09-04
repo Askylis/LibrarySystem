@@ -13,7 +13,7 @@ namespace LibraryManager.DataAccess.Models
         public string Name { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
-        public decimal LateFeeDue {  get; set; }
+        public decimal LateFeeDue { get; set; } = 0m;
         public virtual ICollection<Book> CheckedOutBooks { get; set; }
     }
 }
