@@ -11,7 +11,7 @@ namespace LibraryManager.DataAccess.Models
         public int AuthorId { get; set; }
         public string Name { get; set; }
         public string Biography { get; set; }
-        public string DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public virtual ICollection<Book> Books { get; set; }
     }
 }
