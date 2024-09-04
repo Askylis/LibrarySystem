@@ -28,13 +28,13 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
                 foreach (var book in availableBooks)
                 {
-                    results.Add(new HttpModels.Book 
+                    results.Add(new HttpModels.Book
                     {
                         Title = book.Title,
-                        BookId = book.BookId, 
-                        Author = book.AuthorName, 
+                        BookId = book.BookId,
+                        Author = book.AuthorName,
                         DewyClass = book.DewyClass,
-                        Isbn = book.Isbn, 
+                        Isbn = book.Isbn,
                         Year = book.Year
                     });
                 }
@@ -64,7 +64,6 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 };
 
                 return Ok(result);
-            }
             }
         }
 
