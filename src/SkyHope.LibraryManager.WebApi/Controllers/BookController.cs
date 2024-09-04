@@ -10,6 +10,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     public class BookController : Controller
     {
         private readonly DatabaseOptions _databaseOptions;
+        private const int maxBookCount = 3;
         public BookController(DatabaseOptions databaseOptions)
         {
             _databaseOptions = databaseOptions;
@@ -109,9 +110,15 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                     return NotFound("Could not find user to assign to book.");
                 }
 
+                if (userToAssign.CheckedOutBooks.Count >= maxBookCount)
+                {
+                    return BadRequest($"This user has {maxBookCount} books checked out, and may not check out more.");
+                }
+
                 bookToUpdate.IsAvailable = false;
                 bookToUpdate.UserId = userToAssign.UserId;
                 bookToUpdate.User = userToAssign;
+                userToAssign.CheckedOutBooks.Add(bookToUpdate);
                 await context.SaveChangesAsync();
 
                 return Ok();

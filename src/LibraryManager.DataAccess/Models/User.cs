@@ -9,9 +9,10 @@ namespace LibraryManager.DataAccess.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
+
         public string Name { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
-        public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> CheckedOutBooks { get; set; }
     }
 }
