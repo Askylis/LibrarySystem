@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManager.DataAccess.Models;
 using LibraryManager.DataAccess;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -16,12 +16,12 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<HttpModels.Book>> GetAll()
+        public async Task<ActionResult<IEnumerable<HttpModels.Book>>> GetAllAsync()
         {
             var results = new List<HttpModels.Book>();
             using (var context = new LibraryContext(_databaseOptions.ConnectionString))
             {
-                var availableBooks = context.Books.Where(b => b.IsAvailable && !b.IsDeleted).ToList();
+                var availableBooks = await context.Books.Where(b => b.IsAvailable && !b.IsDeleted).ToListAsync();
 
                 if (!availableBooks.Any())
                 {
@@ -45,11 +45,11 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<HttpModels.Book> GetById(int id)
+        public async Task<ActionResult<HttpModels.Book>> GetByIdAsync(int id)
         {
             using (var context = new LibraryContext(_databaseOptions.ConnectionString))
             {
-                var book = context.Books.FirstOrDefault(b => b.BookId == id);
+                var book = await context.Books.FirstOrDefaultAsync(b => b.BookId == id);
                 if (book is null)
                 {
                     return NotFound();
@@ -69,18 +69,30 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             }
         }
 
-        //[HttpPatch]
-        //public ActionResult<HttpModels.Book> Delete(HttpModels.Book book)
-        //{
-
-        //}
-
         [HttpPatch]
-        public ActionResult CheckOut(HttpModels.Book book, HttpModels.User user)
+        public async Task<ActionResult> DeleteAsync(HttpModels.Book book)
         {
             using (var context = new LibraryContext(_databaseOptions.ConnectionString))
             {
-                var bookToUpdate = context.Books.FirstOrDefault(b => b.BookId == book.BookId);
+                var result = await context.Books.FirstOrDefaultAsync(b => b.BookId == book.BookId);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                result.IsDeleted = true;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult> CheckOutAsync(HttpModels.Book book, HttpModels.User user)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                var bookToUpdate = await context.Books.FirstOrDefaultAsync(b => b.BookId == book.BookId);
                 if (bookToUpdate is null)
                 {
                     return NotFound();
@@ -94,13 +106,13 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 var userToAssign = context.Users.FirstOrDefault(u => u.UserId == user.UserId);
                 if (userToAssign is null)
                 {
-                    return BadRequest("Invalid user.");
+                    return NotFound("Could not find user to assign to book.");
                 }
 
                 bookToUpdate.IsAvailable = false;
                 bookToUpdate.UserId = userToAssign.UserId;
                 bookToUpdate.User = userToAssign;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
 
                 return Ok();
             }
