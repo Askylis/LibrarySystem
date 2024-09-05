@@ -13,13 +13,13 @@ namespace LibraryManager.DataAccess.Models
         public string Title { get; set; }
         public string AuthorName { get; set; }
         public int AuthorId { get; set; }
-        public int? UserId { get; set; }
+        public int? UserId { get; set; } = null;
         public int DewyClass {  get; set; }
         public string Isbn { get; set; }
         public int Year { get; set; }
         public DateTime? DueDate { get; set; } = null;
-        public bool IsAvailable { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsAvailable { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
 
         public virtual Author Author { get; set; }
         public virtual User? User { get; set; }

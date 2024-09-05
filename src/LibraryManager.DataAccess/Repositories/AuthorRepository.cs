@@ -11,7 +11,7 @@ namespace LibraryManager.DataAccess.Repositories
         {
             _databaseOptions = databaseOptions;
         }
-        public async Task TryAddAsync(Author entity)
+        public async Task<bool> TryAddAsync(Author entity)
         {
             throw new NotImplementedException();
         }
@@ -28,7 +28,11 @@ namespace LibraryManager.DataAccess.Repositories
 
         public async Task<Author?> GetEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Authors.FirstOrDefaultAsync(b => b.AuthorId == id)
+                    .ConfigureAwait(false);
+            }
         }
 
         public async Task UpdateAsync(Author dbEntity, Author entity)

@@ -13,10 +13,15 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         private const decimal lateFeePerDay = 0.5m;
         private readonly BookRepository _bookRepository;
         private readonly UserRepository _userRepository;
-        public BookController(BookRepository bookRepository, UserRepository userRepository)
+        private readonly AuthorRepository _authorRepository;
+        private readonly ILogger<BookController> _logger;
+        public BookController(BookRepository bookRepository, UserRepository userRepository, AuthorRepository authorRepository, ILogger<BookController> logger)
         {
             _bookRepository = bookRepository;
             _userRepository = userRepository;
+            _authorRepository = authorRepository;
+            _logger = logger;
+            _logger.LogDebug(1, "NLog injected into BookController");
         }
 
         [HttpGet]
@@ -24,7 +29,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         {
             var results = new List<HttpModels.Book>();
             var allBooks = await _bookRepository.GetAllAsync();
-            var availableBooks = allBooks.Where(b => b.IsAvailable && !b.IsDeleted);
+            var availableBooks = allBooks.Where(b => b.IsAvailable && !b.IsDeleted).ToList();
 
             if (!availableBooks.Any())
             {
@@ -43,6 +48,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                     Year = book.Year
                 });
             }
+            _logger.LogInformation($"GetAllAsync in BooksController returned {availableBooks.Count} available books.");
             return Ok(results);
         }
 
@@ -73,7 +79,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         {
             if (! await _bookRepository.TryDeleteAsync(book.BookId))
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
             return Ok();
         }
@@ -144,20 +150,28 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> AddBookAsync(HttpModels.Book book)
         {
+            var author = await _authorRepository.GetEntityAsync(book.AuthorId);
+            if (author is null)
+            {
+                return BadRequest("Author ID provided is not valid.");
+            }
+
             var bookToAdd = new Book
             {
                 BookId = book.BookId,
                 Title = book.Title,
                 AuthorId = book.AuthorId,
                 DewyClass = book.DewyClass,
-                
+                AuthorName = author.Name,
+                Isbn = book.Isbn,
+                Year = book.Year  
             };
             if (! await _bookRepository.TryAddAsync(bookToAdd))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
 
-            return Ok();
+            return Created();
         }
     }
 }
