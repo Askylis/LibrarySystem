@@ -11,7 +11,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     [Route("[controller]/[action]")]
     public class BookController : Controller
     {
-        private const int maxBookCount = 3;
+        private const int MaxBookCount = 3;
         private const int dueInDays = 14;
         private const decimal lateFeePerDay = 0.5m;
         private readonly BookRepository _bookRepository;
