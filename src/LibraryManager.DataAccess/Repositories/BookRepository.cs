@@ -19,7 +19,7 @@ namespace LibraryManager.DataAccess.Repositories
                 {
                     await context.Books.AddAsync(entity)
                                         .ConfigureAwait(false);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync().ConfigureAwait(false);
                     return true;
                 }
                 catch (Exception ex)
