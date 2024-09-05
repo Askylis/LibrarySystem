@@ -173,5 +173,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
             return Created();
         }
+
+        // need to add methods for listing books by author, listing by dewy class, and listing books within a specific timeframe
     }
 }
