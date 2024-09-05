@@ -26,11 +26,11 @@ public class Program
             var config = configBuilder.Build();
 
             builder.Services.AddDbContext<LibraryContext>(options =>
-        options.UseSqlServer(builder.Configuration["Database:ConnectionString"]));
+            options.UseSqlServer(builder.Configuration["Database:ConnectionString"]));
             builder.Services.Configure<DatabaseOptions>(config.GetSection("Database"));
-            builder.Services.AddScoped<ILibraryManagerRepository<User>, UserRepository>();
-            builder.Services.AddScoped<ILibraryManagerRepository<Book>, BookRepository>();
-            builder.Services.AddScoped<ILibraryManagerRepository<Author>, AuthorRepository>();
+            builder.Services.AddSingleton<ILibraryManagerRepository<User>, UserRepository>();
+            builder.Services.AddSingleton<ILibraryManagerRepository<Book>, BookRepository>();
+            builder.Services.AddSingleton<ILibraryManagerRepository<Author>, AuthorRepository>();
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

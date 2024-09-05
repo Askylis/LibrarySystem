@@ -7,9 +7,9 @@ namespace LibraryManager.DataAccess.Repositories
     public class AuthorRepository : ILibraryManagerRepository<Author>
     {
         private readonly DatabaseOptions _databaseOptions;
-        public AuthorRepository(DatabaseOptions databaseOptions)
+        public AuthorRepository(IOptions<DatabaseOptions> databaseOptions)
         {
-            _databaseOptions = databaseOptions;
+            _databaseOptions = databaseOptions.Value;
         }
         public async Task<bool> TryAddAsync(Author entity)
         {
