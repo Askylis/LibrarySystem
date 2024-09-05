@@ -209,7 +209,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<HttpBook>> GetBooksByDewyAsync(int dewyValue)
+        public async Task<ActionResult<List<HttpBook>>> GetBooksByDewyAsync(int dewyValue)
         {
             var results = new List<HttpBook>();
             var booksByDewy = await _bookRepository.GetBooksByDewyCodeAsync(dewyValue);
