@@ -38,11 +38,6 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             var results = new List<HttpBook>();
             var allBooks = (await _bookRepository.GetAllAsync()).ToList();
 
-            if (allBooks.Count == 0)
-            {
-                return NotFound();
-            }
-
             foreach (var book in allBooks)
             {
                 results.Add(new HttpBook
@@ -132,10 +127,10 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return new CheckoutResponse { ResponseType = CheckoutResponseType.Success };
         }
 
-        [HttpPut]
-        public async Task<ActionResult> CheckInAsync(HttpBook book)
+        [HttpPut("{bookId}")]
+        public async Task<ActionResult> CheckInAsync(int bookId)
         {
-            var bookToUpdate = await _bookRepository.GetEntityAsync(book.BookId);
+            var bookToUpdate = await _bookRepository.GetEntityAsync(bookId);
             if (bookToUpdate is null)
             {
                 return NotFound();
@@ -187,10 +182,6 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         {
             var results = new List<HttpBook>();
             var booksByAuthor = await _bookRepository.GetBooksByAuthorAsync(authorId);
-            if (booksByAuthor.Count == 0)
-            {
-                return Ok("Unable to find any books by the specified author.");
-            }
 
             foreach (var book in booksByAuthor)
             {
@@ -213,10 +204,6 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         {
             var results = new List<HttpBook>();
             var booksByDewy = await _bookRepository.GetBooksByDewyCodeAsync(dewyValue);
-            if (booksByDewy.Count == 0)
-            {
-                return Ok("Unable to find any books in this Dewy class.");
-            }
 
             foreach (var book in booksByDewy)
             {
