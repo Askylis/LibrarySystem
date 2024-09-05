@@ -4,12 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace LibraryManager.DataAccess.Repositories
 {
-    public class AuthorRepository : ILibraryManagerRepository<Author>
+    public class AuthorRepository : IAuthorRepository<Author>
     {
         private readonly DatabaseOptions _databaseOptions;
-        public AuthorRepository(IOptions<DatabaseOptions> databaseOptions)
+        public AuthorRepository(DatabaseOptions databaseOptions)
         {
-            _databaseOptions = databaseOptions.Value;
+            _databaseOptions = databaseOptions;
         }
         public async Task<bool> TryAddAsync(Author entity)
         {

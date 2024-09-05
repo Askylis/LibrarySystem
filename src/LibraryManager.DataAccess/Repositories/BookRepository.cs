@@ -4,12 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace LibraryManager.DataAccess.Repositories
 {
-    public class BookRepository : ILibraryManagerRepository<Book>
+    public class BookRepository : IBookRepository<Book>
     {
         private readonly DatabaseOptions _databaseOptions;
-        public BookRepository(IOptions<DatabaseOptions> databaseOptions)
+        public BookRepository(DatabaseOptions databaseOptions)
         {
-            _databaseOptions = databaseOptions.Value;
+            _databaseOptions = databaseOptions;
         }
         public async Task<bool> TryAddAsync(Book entity)
         {
@@ -54,7 +54,10 @@ namespace LibraryManager.DataAccess.Repositories
 
         public async Task<IEnumerable<Book>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Books.Where(b => b.IsAvailable && !b.IsDeleted).ToListAsync();
+            }
         }
 
         public async Task<Book?> GetEntityAsync(int id)
@@ -69,6 +72,30 @@ namespace LibraryManager.DataAccess.Repositories
         public async Task UpdateAsync(Book dbEntity, Book entity)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Books.Where(b => b.AuthorId == authorId).ToListAsync();
+            }
+        }
+
+        public async Task<List<Book>> GetBooksByDewyCodeAsync(int dewyCode)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Books.Where(b => b.DewyClass == dewyCode).ToListAsync();
+            }
+        }
+
+        public async Task<List<Book>> GetBooksByYearAsync(int startYear, int endYear)
+        {
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Books.Where(b => b.Year >= startYear && b.Year <= endYear).ToListAsync();
+            }
         }
     }
 }

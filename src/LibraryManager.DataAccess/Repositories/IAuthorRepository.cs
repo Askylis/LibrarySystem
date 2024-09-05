@@ -1,6 +1,12 @@
-﻿namespace LibraryManager.DataAccess.Repositories
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LibraryManager.DataAccess.Repositories
 {
-    public interface ILibraryManagerRepository<TEntity>
+    public interface IAuthorRepository<TEntity>
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetEntityAsync(int id);
