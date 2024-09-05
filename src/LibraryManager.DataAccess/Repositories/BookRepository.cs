@@ -35,7 +35,7 @@ namespace LibraryManager.DataAccess.Repositories
             {
                 try
                 {
-                    var book = await context.Books.SingleOrDefaultAsync(b => b.BookId == id);
+                    var book = await context.Books.SingleOrDefaultAsync(b => b.BookId == id).ConfigureAwait(false);
                     if (book == null)
                     {
                         return false;
