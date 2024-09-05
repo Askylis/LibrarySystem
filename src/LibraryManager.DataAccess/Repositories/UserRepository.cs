@@ -4,29 +4,39 @@ using Microsoft.Extensions.Options;
 
 namespace LibraryManager.DataAccess.Repositories
 {
-    public class UserRepository : ILibraryManagerRepository<User>
+    public class UserRepository : IUserRepository<User>
     {
-        public void Add(User entity)
+        private readonly DatabaseOptions _databaseOptions;
+        public UserRepository(DatabaseOptions databaseOptions)
+        {
+            _databaseOptions = databaseOptions;
+        }
+
+        public async Task<bool> TryAddAsync(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(int id)
+        public async Task<bool> TryDeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public User GetEntity(int id)
+        public async Task<User?> GetEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Users.FirstOrDefaultAsync(b => b.UserId == id)
+                    .ConfigureAwait(false);
+            }
         }
 
-        public void Update(User dbEntity, User entity)
+        public async Task UpdateAsync(User dbEntity, User entity)
         {
             throw new NotImplementedException();
         }

@@ -4,29 +4,38 @@ using Microsoft.Extensions.Options;
 
 namespace LibraryManager.DataAccess.Repositories
 {
-    public class AuthorRepository : ILibraryManagerRepository<Author>
+    public class AuthorRepository : IAuthorRepository<Author>
     {
-        public void Add(Author entity)
+        private readonly DatabaseOptions _databaseOptions;
+        public AuthorRepository(DatabaseOptions databaseOptions)
+        {
+            _databaseOptions = databaseOptions;
+        }
+        public async Task<bool> TryAddAsync(Author entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(int id)
+        public async Task<bool> TryDeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Author> GetAll()
+        public async Task<IEnumerable<Author>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Author GetEntity(int id)
+        public async Task<Author?> GetEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new LibraryContext(_databaseOptions.ConnectionString))
+            {
+                return await context.Authors.FirstOrDefaultAsync(b => b.AuthorId == id)
+                    .ConfigureAwait(false);
+            }
         }
 
-        public void Update(Author dbEntity, Author entity)
+        public async Task UpdateAsync(Author dbEntity, Author entity)
         {
             throw new NotImplementedException();
         }

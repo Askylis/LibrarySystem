@@ -9,6 +9,7 @@ namespace LibraryManager.DataAccess.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AuthorId { get; set; }
+
         public string Name { get; set; }
         public string Biography { get; set; }
         public DateOnly DateOfBirth { get; set; }
