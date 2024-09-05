@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LibraryManager.DataAccess.Models;
 using LibraryManager.DataAccess.Repositories;
+using DataAccessBook = LibraryManager.DataAccess.Models.Book;
+using HttpBook = SkyHope.LibraryManager.WebApi.HttpModels.Book;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -25,9 +26,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HttpModels.Book>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<HttpBook>>> GetAllAsync()
         {
-            var results = new List<HttpModels.Book>();
+            var results = new List<HttpBook>();
             var allBooks = await _bookRepository.GetAllAsync();
             var availableBooks = allBooks.Where(b => b.IsAvailable && !b.IsDeleted).ToList();
 
@@ -38,7 +39,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
             foreach (var book in availableBooks)
             {
-                results.Add(new HttpModels.Book
+                results.Add(new HttpBook
                 {
                     Title = book.Title,
                     BookId = book.BookId,
@@ -53,7 +54,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<HttpModels.Book>> GetByIdAsync(int id)
+        public async Task<ActionResult<HttpBook>> GetByIdAsync(int id)
         {
             var book = await _bookRepository.GetEntityAsync(id);
             if (book == null)
@@ -61,7 +62,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 return NotFound();
             }
 
-            var result = new HttpModels.Book
+            var result = new HttpBook
             {
                 Title = book.Title,
                 BookId = book.BookId,
@@ -75,17 +76,17 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpPatch]
-        public async Task<ActionResult> DeleteAsync(HttpModels.Book book)
+        public async Task<ActionResult> DeleteAsync(HttpBook book)
         {
-            if (! await _bookRepository.TryDeleteAsync(book.BookId))
+            if (!await _bookRepository.TryDeleteAsync(book.BookId))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
             return Ok();
         }
 
-        [HttpPatch]
-        public async Task<ActionResult> CheckOutAsync(HttpModels.Book book, HttpModels.User user)
+        [HttpPut]
+        public async Task<ActionResult> CheckOutAsync(HttpBook book, HttpModels.User user)
         {
             var bookToUpdate = await _bookRepository.GetEntityAsync(book.BookId);
             if (bookToUpdate is null)
@@ -123,8 +124,8 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPatch]
-        public async Task<ActionResult> CheckInAsync(HttpModels.Book book)
+        [HttpPut]
+        public async Task<ActionResult> CheckInAsync(HttpBook book)
         {
             var bookToUpdate = await _bookRepository.GetEntityAsync(book.BookId);
             if (bookToUpdate is null)
@@ -156,17 +157,16 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 return BadRequest("Author ID provided is not valid.");
             }
 
-            var bookToAdd = new Book
+            var bookToAdd = new DataAccessBook
             {
                 BookId = book.BookId,
                 Title = book.Title,
                 AuthorId = book.AuthorId,
                 DewyClass = book.DewyClass,
-                AuthorName = author.Name,
                 Isbn = book.Isbn,
-                Year = book.Year  
+                Year = book.Year
             };
-            if (! await _bookRepository.TryAddAsync(bookToAdd))
+            if (!await _bookRepository.TryAddAsync(bookToAdd))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
@@ -174,6 +174,85 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Created();
         }
 
-        // need to add methods for listing books by author, listing by dewy class, and listing books within a specific timeframe
+        [HttpGet]
+        public async Task<ActionResult<HttpBook>> GetBooksByAuthorAsync(int authorId)
+        {
+            var results = new List<HttpBook>();
+            var allBooks = await _bookRepository.GetAllAsync();
+            var booksByAuthor = allBooks.Where(b => b.AuthorId == authorId).ToList();
+            if (booksByAuthor.Count == 0)
+            {
+                return BadRequest("Unable to find any books by the specified author.");
+            }
+
+            foreach (var book in booksByAuthor)
+            {
+                results.Add(new HttpBook
+                {
+                    Title = book.Title,
+                    BookId = book.BookId,
+                    AuthorId = book.AuthorId,
+                    DewyClass = book.DewyClass,
+                    Isbn = book.Isbn,
+                    Year = book.Year
+                });
+            }
+
+            return Ok(results);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<HttpBook>> GetBooksByDewyAsync(int dewyValue)
+        {
+            var results = new List<HttpBook>();
+            var allBooks = await _bookRepository.GetAllAsync();
+            var booksByDewy = allBooks.Where(b => b.DewyClass == dewyValue).ToList();
+            if (booksByDewy.Count == 0)
+            {
+                return BadRequest("Unable to find any books in this Dewy class.");
+            }
+
+            foreach (var book in booksByDewy)
+            {
+                results.Add(new HttpBook
+                {
+                    Title = book.Title,
+                    BookId = book.BookId,
+                    AuthorId = book.AuthorId,
+                    DewyClass = book.DewyClass,
+                    Isbn = book.Isbn,
+                    Year = book.Year
+                });
+            }
+
+            return Ok(results);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<HttpBook>> GetBooksByYearAsync(int startYear, int endYear)
+        {
+            var results = new List<HttpBook>();
+            var allBooks = await _bookRepository.GetAllAsync();
+            var booksByYear = allBooks.Where(b => b.Year < endYear && b.Year > startYear).ToList();
+            if (booksByYear.Count == 0)
+            {
+                return BadRequest("Unable to find any books within this time period.");
+            }
+
+            foreach (var book in booksByYear)
+            {
+                results.Add(new HttpBook
+                {
+                    Title = book.Title,
+                    BookId = book.BookId,
+                    AuthorId = book.AuthorId,
+                    DewyClass = book.DewyClass,
+                    Isbn = book.Isbn,
+                    Year = book.Year
+                });
+            }
+
+            return Ok(results);
+        }
     }
 }

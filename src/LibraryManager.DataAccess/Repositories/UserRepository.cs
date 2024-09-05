@@ -12,7 +12,7 @@ namespace LibraryManager.DataAccess.Repositories
             _databaseOptions = databaseOptions;
         }
 
-        public async Task TryAddAsync(User entity)
+        public async Task<bool> TryAddAsync(User entity)
         {
             throw new NotImplementedException();
         }
