@@ -121,7 +121,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
             if (userToAssign.LateFeeDue > 0)
             {
-                return new CheckoutResponse { ResponseType = CheckoutResponseType.UserIsOLateFeesOverdue };
+                return new CheckoutResponse { ResponseType = CheckoutResponseType.LateFeesOverdue };
             }
 
             bookToUpdate.IsAvailable = false;

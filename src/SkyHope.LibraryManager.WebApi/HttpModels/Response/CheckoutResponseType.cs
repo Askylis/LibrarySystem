@@ -4,7 +4,7 @@
     {
         Success = 1,
         Unavailable = 2,
-        UserIsOLateFeesOverdue = 3,
+        LateFeesOverdue = 3,
         TooManyBooks = 4
     }
 }
