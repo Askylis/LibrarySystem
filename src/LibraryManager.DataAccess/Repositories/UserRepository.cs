@@ -7,9 +7,9 @@ namespace LibraryManager.DataAccess.Repositories
     public class UserRepository : ILibraryManagerRepository<User>
     {
         private readonly DatabaseOptions _databaseOptions;
-        public UserRepository(DatabaseOptions databaseOptions)
+        public UserRepository(IOptions<DatabaseOptions> databaseOptions)
         {
-            _databaseOptions = databaseOptions;
+            _databaseOptions = databaseOptions.Value;
         }
 
         public async Task<bool> TryAddAsync(User entity)

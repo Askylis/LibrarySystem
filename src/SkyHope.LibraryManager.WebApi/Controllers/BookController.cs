@@ -2,6 +2,8 @@
 using LibraryManager.DataAccess.Repositories;
 using DataAccessBook = LibraryManager.DataAccess.Models.Book;
 using HttpBook = SkyHope.LibraryManager.WebApi.HttpModels.Book;
+using SkyHope.LibraryManager.WebApi.HttpModels.Request;
+using SkyHope.LibraryManager.WebApi.HttpModels.Response;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -75,20 +77,23 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPatch]
-        public async Task<ActionResult> DeleteAsync(HttpBook book)
+        [HttpDelete("{bookId}")]
+        public async Task<ActionResult> DeleteAsync(int bookId)
         {
-            if (!await _bookRepository.TryDeleteAsync(book.BookId))
+            // TODO: Check it exists and return 404 if it deosn't
+
+            if (!await _bookRepository.TryDeleteAsync(bookId))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
+
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> CheckOutAsync(HttpBook book, HttpModels.User user)
+        [HttpPut("{bookId}")]
+        public async Task<ActionResult<CheckoutResponse>> CheckOutAsync(int bookId, [FromBody]CheckoutRequest request)
         {
-            var bookToUpdate = await _bookRepository.GetEntityAsync(book.BookId);
+            var bookToUpdate = await _bookRepository.GetEntityAsync(bookId);
             if (bookToUpdate is null)
             {
                 return NotFound();
@@ -96,23 +101,23 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
             if (!bookToUpdate.IsAvailable)
             {
-                return BadRequest("This book is not available for checkout.");
+                return new CheckoutResponse { ResponseType = CheckoutResponseType.Unavailable };
             }
 
-            var userToAssign = await _userRepository.GetEntityAsync(user.UserId);
+            var userToAssign = await _userRepository.GetEntityAsync(request.UserId);
             if (userToAssign is null)
             {
-                return NotFound("Could not find user to assign to book.");
+                return BadRequest("Could not find user to assign to book.");
             }
 
             if (userToAssign.CheckedOutBooks.Count >= maxBookCount)
             {
-                return BadRequest($"This user has {maxBookCount} books checked out, and may not check out more.");
+                return new CheckoutResponse { ResponseType= CheckoutResponseType.TooManyBooks };
             }
 
             if (userToAssign.LateFeeDue > 0)
             {
-                return BadRequest($"This user has ${userToAssign.LateFeeDue} in late fees due and cannot check out another book until this is paid off.");
+                return new CheckoutResponse { ResponseType = CheckoutResponseType.UserIsOLateFeesOverdue };
             }
 
             bookToUpdate.IsAvailable = false;
@@ -121,7 +126,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             bookToUpdate.DueDate = DateTime.Now.AddDays(dueInDays);
             userToAssign.CheckedOutBooks.Add(bookToUpdate);
 
-            return Ok();
+            return new CheckoutResponse { ResponseType = CheckoutResponseType.Success };
         }
 
         [HttpPut]
