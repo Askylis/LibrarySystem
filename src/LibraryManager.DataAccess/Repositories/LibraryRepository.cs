@@ -34,6 +34,12 @@ namespace LibraryManager.DataAccess.Repositories
             return await _context.Set<T>().FindAsync(id).ConfigureAwait(false);
         }
 
+        public async Task AddAsync<T>(T entity)
+            where T : class
+        {
+            await _context.AddAsync(entity);
+        }
+
         public void Delete<T>(T entity)
             where T : class, IDeletable
         {
