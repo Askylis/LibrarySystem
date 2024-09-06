@@ -32,9 +32,7 @@ public class Program
             builder.Services.Configure<DatabaseOptions>(config.GetSection("Database"));
             builder.Services.Configure<LibraryOptions>(config.GetSection("Library"));
             builder.Services.AddScoped(p => p.GetRequiredService<IOptions<DatabaseOptions>>().Value);
-            builder.Services.AddScoped<IBookRepository<Book>, BookRepository>();
-            builder.Services.AddScoped<IUserRepository<User>, UserRepository>();
-            builder.Services.AddScoped<IAuthorRepository<Author>, AuthorRepository>();
+            builder.Services.AddScoped<LibraryRepository>();
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
