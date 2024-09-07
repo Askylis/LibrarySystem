@@ -7,8 +7,6 @@ using SkyHope.LibraryManager.WebApi.HttpModels.Response;
 using LibraryManager.DataAccess;
 using Microsoft.Extensions.Options;
 using LibraryManager.DataAccess.Models;
-//using LibraryManager.DataAccess.Specifications.Users;
-//using LibraryManager.DataAccess.Specifications.Authors;
 using LibraryManager.DataAccess.Specifications.Books;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
@@ -122,7 +120,18 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             bookToUpdate.IsAvailable = false;
             bookToUpdate.UserId = userToAssign.UserId;
             bookToUpdate.DueDate = DateTime.Now.AddDays(_libraryOptions.DueInDays);
+
             userToAssign.CheckedOutBooks.Add(bookToUpdate);
+
+            try
+            {
+                await _repository.SaveAsync();
+            }
+            catch
+            {
+                _logger.LogError("Unexpected error while checking out book.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             return new CheckoutResponse { ResponseType = CheckoutResponseType.Success };
         }
@@ -146,6 +155,15 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             }
 
             bookToUpdate.User.CheckedOutBooks.Remove(bookToUpdate);
+            try
+            {
+                await _repository.SaveAsync();
+            }
+            catch
+            {
+                _logger.LogError("Unexpected error while checking in book.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             return Ok();
         }
