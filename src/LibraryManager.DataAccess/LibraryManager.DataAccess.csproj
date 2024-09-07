@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Specifications\" />
+    <Folder Include="Specifications\Authors\" />
+    <Folder Include="Specifications\Users\" />
   </ItemGroup>
 
 </Project>
