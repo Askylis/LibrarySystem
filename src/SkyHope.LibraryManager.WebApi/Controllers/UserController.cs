@@ -24,7 +24,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<HttpModels.User>>> GetAllAsync()
         {
             var results = new List<HttpModels.User>();
             var allUsers = await _repository.ListAsync(new NotDeletedSpecification());
@@ -89,7 +89,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpPatch("{userId}")]
-        public async Task<ActionResult> EditUserAsync(int userId, User user)
+        public async Task<ActionResult> EditUserAsync(int userId, HttpModels.UserUpdateDto update)
         {
             var userToEdit = await _repository.FindAsync<User>(userId);
             if (userToEdit is null)
@@ -97,27 +97,32 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 return NotFound();
             }
 
-            userToEdit.PhoneNumber = user.PhoneNumber;
-            userToEdit.Address = user.Address;
-            userToEdit.LateFeeDue = user.LateFeeDue;
+            userToEdit.PhoneNumber = update.PhoneNumber;
+            userToEdit.Address = update.Address;
+            userToEdit.LateFeeDue = update.LateFeeDue;
             try
             {
                 await _repository.SaveAsync();
             }
             catch
             {
-                _logger.LogError("Unexpected error when editing a user.");
+                _logger.LogError("Unexpected error when updating user.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         public async Task<ActionResult<IEnumerable<Book>>> BooksByUserAsync(int userId)
         {
             var checkedOutBooks = new List<HttpModels.Book>();
             var user = await _repository.FindAsync<User>(userId);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
             foreach (var book in user.CheckedOutBooks)
             {
                 checkedOutBooks.Add(new HttpModels.Book

@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Specifications\Authors\" />
-    <Folder Include="Specifications\Users\" />
   </ItemGroup>
 
 </Project>
