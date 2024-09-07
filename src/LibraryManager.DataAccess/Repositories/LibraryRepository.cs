@@ -25,7 +25,7 @@ namespace LibraryManager.DataAccess.Repositories
         public async Task<List<T>> ListAsync<T>(ISpecification<T> specification, CancellationToken token = default)
             where T : class
         {
-            return await ApplySpecification(specification).ToListAsync().ConfigureAwait(false);
+            return await ApplySpecification(specification).ToListAsync(token).ConfigureAwait(false);
         }
 
         public async Task<T?> FindAsync<T>(int id)
