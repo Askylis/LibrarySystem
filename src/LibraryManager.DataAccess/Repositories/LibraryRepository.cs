@@ -28,16 +28,16 @@ namespace LibraryManager.DataAccess.Repositories
             return await ApplySpecification(specification).ToListAsync(token).ConfigureAwait(false);
         }
 
-        public async Task<T?> FindAsync<T>(int id)
+        public async Task<T?> FindAsync<T>(int id, CancellationToken token = default)
             where T : class
         {
-            return await _context.Set<T>().FindAsync(id).ConfigureAwait(false);
+            return await _context.Set<T>().FindAsync([id, token], cancellationToken: token).ConfigureAwait(false);
         }
 
-        public async Task AddAsync<T>(T entity)
+        public async Task AddAsync<T>(T entity, CancellationToken token = default)
             where T : class
         {
-            await _context.AddAsync(entity);
+            await _context.AddAsync(entity, token);
         }
 
         public void Delete<T>(T entity)
