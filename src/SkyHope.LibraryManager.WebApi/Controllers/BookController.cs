@@ -6,6 +6,10 @@ using SkyHope.LibraryManager.WebApi.HttpModels.Request;
 using SkyHope.LibraryManager.WebApi.HttpModels.Response;
 using LibraryManager.DataAccess;
 using Microsoft.Extensions.Options;
+using LibraryManager.DataAccess.Models;
+//using LibraryManager.DataAccess.Specifications.Users;
+//using LibraryManager.DataAccess.Specifications.Authors;
+using LibraryManager.DataAccess.Specifications.Books;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -13,30 +17,23 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     [Route("[controller]/[action]")]
     public class BookController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly UserRepository _userRepository;
-        private readonly AuthorRepository _authorRepository;
+        private readonly LibraryRepository _repository;
         private readonly LibraryOptions _libraryOptions;
         private readonly ILogger<BookController> _logger;
-        public BookController(BookRepository bookRepository, 
-            UserRepository userRepository, 
-            AuthorRepository authorRepository, 
+        public BookController(LibraryRepository repository,
             ILogger<BookController> logger,
             IOptions<LibraryOptions> libraryOptions)
         {
-            _bookRepository = bookRepository;
-            _userRepository = userRepository;
-            _authorRepository = authorRepository;
+            _repository = repository;
             _libraryOptions = libraryOptions.Value;
             _logger = logger;
-            _logger.LogDebug(1, "NLog injected into BookController");
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HttpBook>>> GetAllAsync()
         {
             var results = new List<HttpBook>();
-            var allBooks = (await _bookRepository.GetAllAsync()).ToList();
+            var allBooks = await _repository.ListAsync(new NotDeletedSpecification());
 
             foreach (var book in allBooks)
             {
@@ -57,7 +54,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<HttpBook>> GetByIdAsync(int id)
         {
-            var book = await _bookRepository.GetEntityAsync(id);
+            var book = await _repository.FindAsync<Book>(id);
             if (book == null)
             {
                 return NotFound();
@@ -79,12 +76,15 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpDelete("{bookId}")]
         public async Task<ActionResult> DeleteAsync(int bookId)
         {
-            // TODO: Check it exists and return 404 if it deosn't
+            var book = await _repository.FindAsync<Book>(bookId);
 
-            if (!await _bookRepository.TryDeleteAsync(bookId))
+            if (book is null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                return NotFound();
             }
+
+            _repository.Delete(book);
+            await _repository.SaveAsync();
 
             return Ok();
         }
@@ -92,7 +92,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpPut("{bookId}")]
         public async Task<ActionResult<CheckoutResponse>> CheckOutAsync(int bookId, [FromBody]CheckoutRequest request)
         {
-            var bookToUpdate = await _bookRepository.GetEntityAsync(bookId);
+            var bookToUpdate = await _repository.FindAsync<Book>(bookId);
             if (bookToUpdate is null)
             {
                 return NotFound();
@@ -103,7 +103,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 return new CheckoutResponse { ResponseType = CheckoutResponseType.Unavailable };
             }
 
-            var userToAssign = await _userRepository.GetEntityAsync(request.UserId);
+            var userToAssign = await _repository.FindAsync<User>(bookId);
             if (userToAssign is null)
             {
                 return BadRequest("Could not find user to assign to book.");
@@ -130,7 +130,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpPut("{bookId}")]
         public async Task<ActionResult> CheckInAsync(int bookId)
         {
-            var bookToUpdate = await _bookRepository.GetEntityAsync(bookId);
+            var bookToUpdate = await _repository.FindAsync<Book>(bookId);
             if (bookToUpdate is null)
             {
                 return NotFound();
@@ -153,7 +153,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> AddBookAsync(HttpBook book)
         {
-            var author = await _authorRepository.GetEntityAsync(book.AuthorId);
+            var author = await _repository.FindAsync<Author>(book.AuthorId);
             if (author is null)
             {
                 return BadRequest("Author ID provided is not valid.");
@@ -168,12 +168,16 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
                 Isbn = book.Isbn,
                 Year = book.Year
             };
-            if (!await _bookRepository.TryAddAsync(bookToAdd))
+            try
             {
-                _logger.LogError("An unexpected occurred while trying to add a new book with AddBookAsync().");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                await _repository.AddAsync<Book>(bookToAdd);
             }
-
+            catch
+            {
+                _logger.LogError("Something went wrong when adding a book to the database.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            await _repository.SaveAsync();
             return Created();
         }
 
@@ -181,7 +185,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         public async Task<ActionResult<HttpBook>> GetBooksByAuthorAsync(int authorId)
         {
             var results = new List<HttpBook>();
-            var booksByAuthor = await _bookRepository.GetBooksByAuthorAsync(authorId);
+            var booksByAuthor = await _repository.ListAsync<Book>(new AuthorSpecification(authorId));
 
             foreach (var book in booksByAuthor)
             {
@@ -203,7 +207,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         public async Task<ActionResult<List<HttpBook>>> GetBooksByDewyAsync(int dewyValue)
         {
             var results = new List<HttpBook>();
-            var booksByDewy = await _bookRepository.GetBooksByDewyCodeAsync(dewyValue);
+            var booksByDewy = await _repository.ListAsync<Book>(new DewySpecification(dewyValue));
 
             foreach (var book in booksByDewy)
             {
@@ -221,15 +225,11 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok(results);
         }
 
-        [HttpGet]
+        [HttpGet("{startYear}/{endYear}")]
         public async Task<ActionResult<HttpBook>> GetBooksByYearAsync(int startYear, int endYear)
         {
             var results = new List<HttpBook>();
-            var booksByYear = await _bookRepository.GetBooksByYearAsync(startYear, endYear);
-            if (booksByYear.Count == 0)
-            {
-                return Ok("Unable to find any books within this time period.");
-            }
+            var booksByYear = await _repository.ListAsync(new YearSpecification(startYear, endYear));
 
             foreach (var book in booksByYear)
             {
