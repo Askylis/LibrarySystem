@@ -8,7 +8,7 @@ using LibraryManager.DataAccess.Specifications.Users;
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     public class UserController : Controller
     {
         private readonly LibraryRepository _repository;
@@ -112,7 +112,5 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
 
             return Ok();
         }
-
-        
     }
 }

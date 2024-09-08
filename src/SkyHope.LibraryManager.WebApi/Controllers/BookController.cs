@@ -12,7 +12,7 @@ using LibraryManager.DataAccess.Specifications.Books;
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     public class BookController : Controller
     {
         private readonly LibraryRepository _repository;
@@ -27,7 +27,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<HttpBook>>> GetAllAsync()
         {
             var results = new List<HttpBook>();
@@ -49,10 +49,10 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok(results);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<HttpBook>> GetByIdAsync(int id)
+        [HttpGet("{bookId}")]
+        public async Task<ActionResult<HttpBook>> GetByIdAsync(int bookId)
         {
-            var book = await _repository.FindAsync<Book>(id);
+            var book = await _repository.FindAsync<Book>(bookId);
             if (book == null)
             {
                 return NotFound();
@@ -87,7 +87,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPut("{bookId}")]
+        [HttpPut("checkout/{bookId}")]
         public async Task<ActionResult<CheckoutResponse>> CheckOutAsync(int bookId, [FromBody]CheckoutRequest request)
         {
             var bookToUpdate = await _repository.FindAsync<Book>(bookId);
@@ -136,7 +136,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return new CheckoutResponse { ResponseType = CheckoutResponseType.Success };
         }
 
-        [HttpPut("{bookId}")]
+        [HttpPut("checkin/{bookId}")]
         public async Task<ActionResult> CheckInAsync(int bookId)
         {
             var bookToUpdate = await _repository.FindAsync<Book>(bookId);
@@ -199,7 +199,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Created();
         }
 
-        [HttpGet]
+        [HttpGet("author/{authorId}")]
         public async Task<ActionResult<HttpBook>> GetBooksByAuthorAsync(int authorId)
         {
             var results = new List<HttpBook>();
@@ -221,7 +221,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok(results);
         }
 
-        [HttpGet]
+        [HttpGet("dewy/{dewyValue}")]
         public async Task<ActionResult<List<HttpBook>>> GetBooksByDewyAsync(int dewyValue)
         {
             var results = new List<HttpBook>();
