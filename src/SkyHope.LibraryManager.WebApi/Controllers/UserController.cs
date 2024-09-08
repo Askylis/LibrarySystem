@@ -59,9 +59,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             {
                 await _repository.AddAsync(userToAdd);
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError("Something went wrong when adding a new user to the database.");
+                _logger.LogError(ex, "Unexpected error while adding a new user to the database.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
@@ -87,9 +87,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             {
                 await _repository.SaveAsync();
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError($"Server error while deleting user {user.Name}.");
+                _logger.LogError(ex, $"Unexpected error while deleting user {user.Name}.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             
@@ -113,9 +113,9 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             {
                 await _repository.SaveAsync();
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError("Unexpected error when updating user.");
+                _logger.LogError(ex, "Unexpected error while updating user.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
