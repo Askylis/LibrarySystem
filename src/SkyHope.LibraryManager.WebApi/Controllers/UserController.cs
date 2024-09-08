@@ -113,30 +113,6 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<IEnumerable<Book>>> BooksByUserAsync(int userId)
-        {
-            var checkedOutBooks = new List<HttpModels.Book>();
-            var user = await _repository.FindAsync<User>(userId);
-            if (user is null)
-            {
-                return NotFound();
-            }
-
-            foreach (var book in user.CheckedOutBooks)
-            {
-                checkedOutBooks.Add(new HttpModels.Book
-                {
-                    Title = book.Title,
-                    AuthorId = book.AuthorId,
-                    BookId = book.BookId,
-                    DewyClass = book.DewyClass,
-                    Isbn = book.Isbn,
-                    Year = book.Year,
-                });
-            }
-
-            return Ok(checkedOutBooks);
-        }
+        
     }
 }
