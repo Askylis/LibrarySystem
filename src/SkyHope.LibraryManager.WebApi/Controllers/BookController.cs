@@ -244,7 +244,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         }
 
         [HttpGet("{startYear}/{endYear}")]
-        public async Task<ActionResult<HttpBook>> GetBooksByYearAsync(int startYear, int endYear)
+        public async Task<ActionResult<List<HttpBook>>> GetBooksByYearAsync(int startYear, int endYear)
         {
             var results = new List<HttpBook>();
             var booksByYear = await _repository.ListAsync(new YearSpecification(startYear, endYear));
@@ -265,17 +265,18 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             return Ok(results);
         }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<IEnumerable<Book>>> BooksByUserAsync(int userId)
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<List<HttpBook>>> BooksByUserAsync(int userId)
         {
             var checkedOutBooks = new List<HttpBook>();
             var user = await _repository.FindAsync<User>(userId);
+            var books = user.CheckedOutBooks.ToList();
             if (user is null)
             {
                 return NotFound();
             }
 
-            foreach (var book in user.CheckedOutBooks)
+            foreach (var book in books)
             {
                 checkedOutBooks.Add(new HttpBook
                 {
