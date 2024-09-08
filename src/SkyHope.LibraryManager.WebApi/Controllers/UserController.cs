@@ -83,7 +83,16 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
             user.Name = _libraryOptions.AnonName;
             user.PhoneNumber = _libraryOptions.AnonPhoneNumber;
             user.Address = _libraryOptions.AnonAddress;
-            await _repository.SaveAsync();
+            try
+            {
+                await _repository.SaveAsync();
+            }
+            catch
+            {
+                _logger.LogError($"Server error while deleting user {user.Name}.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
 
             return Ok();
         }
