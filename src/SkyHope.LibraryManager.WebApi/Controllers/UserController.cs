@@ -4,6 +4,7 @@ using LibraryManager.DataAccess;
 using Microsoft.Extensions.Options;
 using LibraryManager.DataAccess.Models;
 using LibraryManager.DataAccess.Specifications.Users;
+using Microsoft.SqlServer.Server;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -47,7 +48,7 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> AddUserAsync(HttpModels.User user)
         {
-            var userToAdd = new HttpModels.User
+            var userToAdd = new User
             {
                 Address = user.Address,
                 Name = user.Name,

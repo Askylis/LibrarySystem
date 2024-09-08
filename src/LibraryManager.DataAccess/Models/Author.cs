@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManager.DataAccess.Models
 {
-    public class Author
+    public class Author : IDeletable
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,5 +14,6 @@ namespace LibraryManager.DataAccess.Models
         public string Biography { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public virtual ICollection<Book> Books { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
