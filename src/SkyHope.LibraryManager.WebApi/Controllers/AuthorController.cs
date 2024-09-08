@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LibraryManager.DataAccess.Models;
+﻿using LibraryManager.DataAccess.Models;
 using LibraryManager.DataAccess.Repositories;
-using LibraryManager.DataAccess;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
@@ -10,15 +9,12 @@ namespace SkyHope.LibraryManager.WebApi.Controllers
     public class AuthorController : Controller
     {
         private readonly LibraryRepository _repository;
-        private readonly LibraryOptions _libraryOptions;
         private readonly ILogger<AuthorController> _logger;
 
         public AuthorController(LibraryRepository repository,
-            LibraryOptions options,
             ILogger<AuthorController> logger)
         {
             _repository = repository;
-            _libraryOptions = options;
             _logger = logger;
         }
 

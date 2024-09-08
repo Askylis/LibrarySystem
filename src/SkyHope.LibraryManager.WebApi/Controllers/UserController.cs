@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LibraryManager.DataAccess.Repositories;
-using LibraryManager.DataAccess;
-using Microsoft.Extensions.Options;
+﻿using LibraryManager.DataAccess;
 using LibraryManager.DataAccess.Models;
+using LibraryManager.DataAccess.Repositories;
 using LibraryManager.DataAccess.Specifications.Users;
-using Microsoft.SqlServer.Server;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace SkyHope.LibraryManager.WebApi.Controllers
 {
