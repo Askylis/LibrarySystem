@@ -1,1 +1,2 @@
-Critical: KiotaBuilder error generating the client: Could not open the file at H:\Sky's stuff\Programming\Code\LibrarySystem\src\SkyHope.LibraryManager.WebApiClient\..\..\docs\openapi.yml, reason: Could not find file 'H:\Sky's stuff\Programming\Code\LibrarySystem\docs\openapi.yml'.
+Warning: KiotaBuilder OpenAPI warning: #/ - A servers entry (v3) or host + basePath + schemes properties (v2) was not present in the OpenAPI description. The root URL will need to be set manually with the request adapter.
+Warning: KiotaBuilder No server url found in the OpenAPI document. The base url will need to be set when using the client.
