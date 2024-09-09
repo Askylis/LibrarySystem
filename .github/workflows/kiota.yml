@@ -1,6 +1,9 @@
 name: Generate Kiota client
 run-name: Generate Kiota client
-on: [push]
+on:
+  pull_request:
+    branches:
+      - 'main'
 permissions:
   contents: write
 jobs:
