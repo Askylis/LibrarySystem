@@ -1,0 +1,52 @@
+name: Generate Kiota client
+run-name: Generate Kiota client
+on:
+  pull_request:
+    branches:
+      - 'main'
+permissions:
+  contents: write
+jobs:
+  Generate-Kiota-Client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          
+      - uses: actions/checkout@v3
+          
+      - name: Build Project
+        run: dotnet build SkyHope.LibraryManager.sln
+        working-directory: src
+
+      - uses: microsoft/setup-kiota@v0.5.0
+      
+      - name: Install Swagger
+        run: dotnet tool install --create-manifest-if-needed Swashbuckle.AspNetCore.Cli
+        
+      - name: Generate OpenAPI yaml
+        run: dotnet swagger tofile --output ${{ github.workspace }}/docs/openapi.yml --yaml ${{ github.workspace }}/src/SkyHope.LibraryManager.WebApi/bin/Debug/net8.0/SkyHope.LibraryManager.WebApi.dll v1
+
+      - name: Commit OpenAPI yaml
+        run: |
+          git config --global user.name 'Sky Hope'
+          git config --global user.email '46830926+Askylis@users.noreply.github.com'
+          if git status | grep "docs/openapi.yml"; then
+            git add ${{ github.workspace }}/docs/openapi.yml
+            git commit -m "ci: Updated OpenAPI yaml"
+            git push;
+          fi;
+          
+      - name: Update kiota clients in the repository
+        run: kiota update -o ./SkyHope.LibraryManager.WebApiClient
+        working-directory: src
+
+      - name: Commit Kiota client
+        run: |
+          rm ${{ github.workspace }}/.config/dotnet-tools.json
+          if ! git status | grep "nothing to commit"; then
+            git add ${{ github.workspace }}/src/\*
+            git commit -m "ci: Updated Kiota client"
+            git push;
+          fi;

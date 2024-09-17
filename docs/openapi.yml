@@ -1,0 +1,408 @@
+openapi: 3.0.1
+info:
+  title: 'SkyHope.LibraryManager.WebApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
+  version: '1.0'
+paths:
+  /Book/all:
+    get:
+      tags:
+        - Book
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  '/Book/{bookId}':
+    get:
+      tags:
+        - Book
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+    delete:
+      tags:
+        - Book
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  '/Book/checkout/{bookId}':
+    put:
+      tags:
+        - Book
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+  '/Book/checkin/{bookId}':
+    put:
+      tags:
+        - Book
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /Book:
+    post:
+      tags:
+        - Book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Success
+  '/Book/author/{authorId}':
+    get:
+      tags:
+        - Book
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  '/Book/dewy/{dewyValue}':
+    get:
+      tags:
+        - Book
+      parameters:
+        - name: dewyValue
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  '/Book/{startYear}/{endYear}':
+    get:
+      tags:
+        - Book
+      parameters:
+        - name: startYear
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: endYear
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  '/Book/user/{userId}':
+    get:
+      tags:
+        - Book
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  /User:
+    get:
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Success
+  '/User/{userId}':
+    delete:
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    patch:
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: integer
+          format: int32
+        title:
+          type: string
+          nullable: true
+        authorId:
+          type: integer
+          format: int32
+        dewyClass:
+          type: integer
+          format: int32
+        isbn:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          format: int32
+        isAvailable:
+          type: boolean
+        isDeleted:
+          type: boolean
+      additionalProperties: false
+    CheckoutRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+      additionalProperties: false
+    CheckoutResponse:
+      type: object
+      properties:
+        responseType:
+          $ref: '#/components/schemas/CheckoutResponseType'
+      additionalProperties: false
+    CheckoutResponseType:
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+      type: integer
+      format: int32
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+      additionalProperties: false
+    UserUpdateDto:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        lateFeeDue:
+          type: number
+          format: double
+      additionalProperties: false
